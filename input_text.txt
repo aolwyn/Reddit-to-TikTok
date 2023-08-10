@@ -1,1 +1,1 @@
-Hey everyone. Riot Mort here, and with Runeterra Reforged Mid-Set coming up, we wanted to give an update on where we are at with Augment stats data and the API.
+hey everyone, testing input text here. should be good to go! - adam
