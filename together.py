@@ -1,4 +1,3 @@
-
 #HuggingFace Microsoft Model library requirements
 from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
 from datasets import load_dataset
@@ -8,12 +7,18 @@ from pydub import AudioSegment
 
 #Google TTS Model Reqs
 from gtts import gTTS
-from pydub import AudioSegment
+#from pydub import AudioSegment <-- duplicated, see above.
 
 #library requirements for the noise reduction
 import noisereduce as nr
 import librosa
 import soundfile as sf
+
+#helpful documentation:
+#https://github.com/jiaaro/pydub
+#https://huggingface.co/microsoft/speecht5_tts
+#https://github.com/MiniGlome/Tiktok-uploader
+
 
 #TODO - GET REDDIT API KEY!
 
@@ -25,10 +30,13 @@ def test_cuda():
             print("CUDA is available.")
             print("Number of CUDA devices:", torch.cuda.device_count())
             print("CUDA device name:", torch.cuda.get_device_name(0))
+            print("#-----------------------------------------------------------")
         else:
             print("CUDA is not available.")
+            print("#-----------------------------------------------------------")
     except Exception as e:
         print("An error occurred while testing CUDA:", e)
+        print("#-----------------------------------------------------------")
 
 #-----------------------------------------------------------
 
@@ -52,6 +60,29 @@ def TTSMS(input_text, output_path):
 
 #-----------------------------------------------------------
 
+def TTSGGL(text, language='en', slow=False, output_file='TTS_GGL.mp3'):
+    try:
+        tts = gTTS(text=text, lang=language, slow=slow)
+        tts.save(output_file)
+        print(f"Google text-to-speech audio saved as {output_file}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+#-----------------------------------------------------------
+
+def increase_playback_speed(input_path, output_path, speed_factor=1.1):
+    try:
+        song = AudioSegment.from_mp3(input_path)
+        
+        spedup = song.speedup(playback_speed=speed_factor, chunk_size=150, crossfade=25)
+        spedup.export(output_path, format="mp3")
+        
+        print("Playback speed increased and saved successfully.")
+    except Exception as e:
+        print("An error occurred:", e)
+
+#-----------------------------------------------------------
+
 def reduce_noise_in_audio(input_file_path, output_file_path):
     try:
         print("Starting noise reduction...")
@@ -66,16 +97,6 @@ def reduce_noise_in_audio(input_file_path, output_file_path):
 
 #-----------------------------------------------------------
 
-def TTSGGL(text, language='en', slow=False, output_file='output.mp3'):
-    try:
-        tts = gTTS(text=text, lang=language, slow=slow)
-        tts.save(output_file)
-        print(f"Google text-to-speech audio saved as {output_file}")
-    except Exception as e:
-        print(f"An error occurred: {e}")
-
-#-----------------------------------------------------------
-
 if __name__ == "__main__":
     input_text_path = "input_text.txt"
     output_MS_path = "output.wav"
@@ -84,8 +105,7 @@ if __name__ == "__main__":
         input_text = file.read()
 
     test_cuda()
-    TTSMS(input_text, output_MS_path)
-    reduce_noise_in_audio(output_MS_path, "noise_reduced_output.wav")
+    print(input_text)
     print("Testing Google Model...")
-    TTSGGL(input_text, output_file='output_audio.mp3')
+    TTSGGL(input_text,output_file='TTS_GGL.mp3')
     

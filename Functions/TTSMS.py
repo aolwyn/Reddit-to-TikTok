@@ -1,14 +1,15 @@
-#Documentation:
-#https://huggingface.co/microsoft/speecht5_tts
-
 from transformers import SpeechT5Processor, SpeechT5ForTextToSpeech, SpeechT5HifiGan
 from datasets import load_dataset
 import torch
-import soundfile as sf
 from datasets import load_dataset
 from pydub import AudioSegment
+from gtts import gTTS
+import noisereduce as nr
+import librosa
+import soundfile as sf
 
-def process_text_to_speech(input_text, output_path):
+def TTSMS(input_text, output_path):
+    print("Testing Microsoft TTS Hugging Face Model...")
     processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
     model = SpeechT5ForTextToSpeech.from_pretrained("microsoft/speecht5_tts")
     vocoder = SpeechT5HifiGan.from_pretrained("microsoft/speecht5_hifigan")
@@ -24,12 +25,3 @@ def process_text_to_speech(input_text, output_path):
     print("Writing Text to Speech Wav file...")
     sf.write(output_path, speech.numpy(), samplerate=16500)
     print("Complete!")
-
-if __name__ == "__main__":
-    input_text_path = "input_text.txt"
-    output_audio_path = "output.wav"
-
-    with open(input_text_path, "r") as file:
-        input_text = file.read()
-
-    process_text_to_speech(input_text, output_audio_path)
