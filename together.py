@@ -6,6 +6,10 @@ import torch
 from datasets import load_dataset
 from pydub import AudioSegment
 
+#Google TTS Model Reqs
+from gtts import gTTS
+from pydub import AudioSegment
+
 #library requirements for the noise reduction
 import noisereduce as nr
 import librosa
@@ -28,7 +32,8 @@ def test_cuda():
 
 #-----------------------------------------------------------
 
-def process_text_to_speech(input_text, output_path):
+def TTSMS(input_text, output_path):
+    print("Testing Microsoft TTS Hugging Face Model...")
     processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
     model = SpeechT5ForTextToSpeech.from_pretrained("microsoft/speecht5_tts")
     vocoder = SpeechT5HifiGan.from_pretrained("microsoft/speecht5_hifigan")
@@ -61,6 +66,13 @@ def reduce_noise_in_audio(input_file_path, output_file_path):
 
 #-----------------------------------------------------------
 
+def TTSGGL(text, language='en', slow=False, output_file='output.mp3'):
+    tts = gTTS(text=text, lang=language)
+    tts.save(output_file)
+    print(f"Google text-to-speech audio saved as {output_file}")
+
+#-----------------------------------------------------------
+
 if __name__ == "__main__":
     Input_Text_Path = "input_text.txt"
     output_Audio_Path = "output.wav"
@@ -69,5 +81,8 @@ if __name__ == "__main__":
         input_text = file.read()
 
     test_cuda()
-    process_text_to_speech(input_text, output_Audio_Path)
+    TTSMS(input_text, output_Audio_Path)
     reduce_noise_in_audio(output_Audio_Path, "noise_reduced_output.wav")
+    print("Testing Google Model...")
+    TTSGGL(input_text, output_file='output_audio.mp3')
+    
