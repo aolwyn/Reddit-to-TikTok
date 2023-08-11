@@ -14,6 +14,10 @@ import noisereduce as nr
 import librosa
 import soundfile as sf
 
+#For API things
+from dotenv import load_dotenv
+import os
+
 #helpful documentation:
 #https://github.com/jiaaro/pydub
 #https://huggingface.co/microsoft/speecht5_tts
@@ -37,6 +41,19 @@ def test_cuda():
     except Exception as e:
         print("An error occurred while testing CUDA:", e)
         print("#-----------------------------------------------------------")
+
+#-----------------------------------------------------------
+
+def clean_text(input_text):
+    try:
+        cleaned_text = input_text.replace("\"", "")
+        cleaned_text = cleaned_text.replace("AITA", "am I the A Hole")
+        cleaned_text = cleaned_text.replace(".", " ")
+        
+        return cleaned_text
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
 
 #-----------------------------------------------------------
 
@@ -98,14 +115,19 @@ def reduce_noise_in_audio(input_file_path, output_file_path):
 #-----------------------------------------------------------
 
 if __name__ == "__main__":
-    input_text_path = "input_text.txt"
-    output_MS_path = "output.wav"
 
+    #set the location of the input text
+    input_text_path = "input_text.txt"
+    
+    #open said text
     with open(input_text_path, "r") as file:
         input_text = file.read()
 
+    #load .env variables 
+    load_dotenv()
+
+    #test tensors + run 
     test_cuda()
-    print(input_text)
-    print("Testing Google Model...")
+    clean_text(input_text)
     TTSGGL(input_text,output_file='TTS_GGL.mp3')
     
