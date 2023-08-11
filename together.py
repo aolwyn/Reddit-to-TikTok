@@ -67,22 +67,25 @@ def reduce_noise_in_audio(input_file_path, output_file_path):
 #-----------------------------------------------------------
 
 def TTSGGL(text, language='en', slow=False, output_file='output.mp3'):
-    tts = gTTS(text=text, lang=language)
-    tts.save(output_file)
-    print(f"Google text-to-speech audio saved as {output_file}")
+    try:
+        tts = gTTS(text=text, lang=language, slow=slow)
+        tts.save(output_file)
+        print(f"Google text-to-speech audio saved as {output_file}")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 #-----------------------------------------------------------
 
 if __name__ == "__main__":
-    Input_Text_Path = "input_text.txt"
-    output_Audio_Path = "output.wav"
+    input_text_path = "input_text.txt"
+    output_MS_path = "output.wav"
 
-    with open(Input_Text_Path, "r") as file:
+    with open(input_text_path, "r") as file:
         input_text = file.read()
 
     test_cuda()
-    TTSMS(input_text, output_Audio_Path)
-    reduce_noise_in_audio(output_Audio_Path, "noise_reduced_output.wav")
+    TTSMS(input_text, output_MS_path)
+    reduce_noise_in_audio(output_MS_path, "noise_reduced_output.wav")
     print("Testing Google Model...")
     TTSGGL(input_text, output_file='output_audio.mp3')
     
